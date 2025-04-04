@@ -20,8 +20,8 @@ public class SocialMediaController {
     MessageService messageService;
 
     public SocialMediaController() {
-        accountService = new AccountService();
-        messageService = new MessageService();
+        this.accountService = new AccountService();
+        this.messageService = new MessageService();
     }
 
 
@@ -34,6 +34,7 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
         // app.get("example-endpoint", this::exampleHandler);
         app.post("register", this::postAddAccountHandler);
+        app.post("login", this::postLoginHandler);
         
         return app;
     }
@@ -60,6 +61,23 @@ public class SocialMediaController {
             ctx.json(mapper.writeValueAsString(addedAccount));
         } else {
             ctx.status(400);
+        }
+    }
+
+    /**
+     * This is an example handler for the login endpoint.
+     * @param ctx The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException will be thrown if the JSON cannot be processed.
+     */
+    private void postLoginHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(ctx.body(), Account.class);
+        Account loggedInAccount = accountService.login(account);
+        if (loggedInAccount != null) {
+            ctx.status(200);
+            ctx.json(mapper.writeValueAsString(loggedInAccount));
+        } else {
+            ctx.status(401);
         }
     }
 }
