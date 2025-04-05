@@ -41,6 +41,7 @@ public class SocialMediaController {
         app.post("messages", this::postAddMessageHandler);
         app.get("messages", this::getAllMessagesHandler);
         app.get("messages/{message_id}", this::getMessageByIdHandler);        
+        app.delete("messages/{message_id}", this::deleteMessageByIdHandler);        
         
         return app;
     }
@@ -113,6 +114,19 @@ public class SocialMediaController {
         if (message != null) {
             ctx.status(200);
             ctx.json(mapper.writeValueAsString(message));
+        } else {
+            ctx.status(200);
+            ctx.json(""); // Empty response body if no message is found
+        }
+    }
+
+    private void deleteMessageByIdHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message deletedMessage = messageService.deleteMessageById(messageId);
+        if (deletedMessage != null) {
+            ctx.status(200);
+            ctx.json(mapper.writeValueAsString(deletedMessage));
         } else {
             ctx.status(200);
             ctx.json(""); // Empty response body if no message is found
