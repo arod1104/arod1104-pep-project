@@ -47,4 +47,19 @@ public class AccountService {
         }
         return null; // Login fails
     }
+
+    /**
+     * Checks if an account exists in the database by its account_id.
+     * 
+     * @param accountId The account_id to check.
+     * @return true if the account exists, false otherwise.
+     */
+    public boolean isAccountValid(int accountId) {
+        if (accountId <= 0) {
+            return false; // Invalid account_id
+        } else if (accountDAO.getAccountById(accountId) == null) {
+            return false; // Account does not exist
+        }
+        return true; // Account exists
+    }
 }

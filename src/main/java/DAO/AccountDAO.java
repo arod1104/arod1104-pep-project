@@ -1,11 +1,13 @@
 package DAO;
 
-import java.sql.*;
-import Model.Account;
 import Util.ConnectionUtil;
+import Model.Account;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class AccountDAO {
     /**
@@ -39,6 +41,36 @@ public class AccountDAO {
         }
         return null;
     }
+
+    /**
+ * Checks if an account exists in the database by its account_id.
+ * 
+ * @param accountId The account_id to check.
+ * @return true if the account exists, false otherwise.
+ */
+public Account getAccountById(int accountId) {
+    Connection connection = ConnectionUtil.getConnection();
+    try {
+        String sql = "SELECT * FROM account WHERE account_id = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, accountId);
+        ResultSet rs = preparedStatement.executeQuery();
+
+        if (rs.next()) {
+            Account account = new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
+            return account; // Return the account if found
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } finally {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    return null; // Default to false if an exception occurs
+}
 
     /**
      * Registers a new account in the database.

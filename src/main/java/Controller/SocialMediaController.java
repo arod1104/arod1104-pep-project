@@ -2,13 +2,16 @@ package Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import io.javalin.Javalin;
-import io.javalin.http.Context;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import Model.Account;
 import Model.Message;
 import Service.AccountService;
 import Service.MessageService;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.List;
+// import java.util.ArrayList;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -35,6 +38,8 @@ public class SocialMediaController {
         // app.get("example-endpoint", this::exampleHandler);
         app.post("register", this::postAddAccountHandler);
         app.post("login", this::postLoginHandler);
+        app.post("messages", this::postAddMessageHandler);
+        app.get("messages", this::getAllMessagesHandler);
         
         return app;
     }
@@ -78,6 +83,27 @@ public class SocialMediaController {
             ctx.json(mapper.writeValueAsString(loggedInAccount));
         } else {
             ctx.status(401);
+        }
+    }
+
+    private void postAddMessageHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(), Message.class);
+        Message addedMessage = messageService.addMessage(message);
+        if (addedMessage != null) {
+            ctx.status(200);
+            ctx.json(mapper.writeValueAsString(addedMessage));
+        } else {
+            ctx.status(400);
+        }
+    }
+
+    private void getAllMessagesHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        List<Message> messages = messageService.getAllMessages();
+        if (messages != null && !messages.isEmpty()) {
+            ctx.status(200);
+            ctx.json(mapper.writeValueAsString(messages));
         }
     }
 }
