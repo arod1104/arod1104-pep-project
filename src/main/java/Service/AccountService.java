@@ -6,6 +6,9 @@ import DAO.AccountDAO;
 public class AccountService {
     private AccountDAO accountDAO;
 
+    /**
+     * Default constructor for AccountService that initializes the AccountDAO.
+     */
     public AccountService() {
         accountDAO = new AccountDAO();
     }

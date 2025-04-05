@@ -11,7 +11,6 @@ import io.javalin.http.Context;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
-// import java.util.ArrayList;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -35,7 +34,6 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        // app.get("example-endpoint", this::exampleHandler);
         app.post("register", this::postAddAccountHandler);
         app.post("login", this::postLoginHandler);
         app.post("messages", this::postAddMessageHandler);
@@ -47,14 +45,6 @@ public class SocialMediaController {
         
         return app;
     }
-
-    // /**
-    //  * This is an example handler for an example endpoint.
-    //  * @param context The Javalin Context object manages information about both the HTTP request and response.
-    //  */
-    // private void exampleHandler(Context context) {
-    //     context.json("sample text");
-    // }
 
     /**
      * This is an example handler for the register endpoint.
@@ -90,6 +80,11 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * Handler for the addMessage endpoint.
+     * @param ctx The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException will be thrown if the JSON cannot be processed.
+     */
     private void postAddMessageHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
@@ -102,6 +97,11 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * Handler for the getAllMessages endpoint.
+     * @param ctx The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException will be thrown if the JSON cannot be processed.
+     */
     private void getAllMessagesHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         List<Message> messages = messageService.getAllMessages();
@@ -109,6 +109,11 @@ public class SocialMediaController {
         ctx.json(mapper.writeValueAsString(messages));
     }
 
+    /**
+     * Handler for the getMessageById endpoint.
+     * @param ctx The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException will be thrown if the JSON cannot be processed.
+     */
     private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         int messageId = Integer.parseInt(ctx.pathParam("message_id"));
@@ -122,6 +127,11 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * Handler for the deleteMessageById endpoint.
+     * @param ctx The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException will be thrown if the JSON cannot be processed.
+     */
     private void deleteMessageByIdHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         int messageId = Integer.parseInt(ctx.pathParam("message_id"));
@@ -135,6 +145,11 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * Handler for the patchUpdateMessagebyId endpoint.
+     * @param ctx The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException will be thrown if the JSON cannot be processed.
+     */
     private void patchUpdateMessagebyIdHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         int messageId = Integer.parseInt(ctx.pathParam("message_id"));

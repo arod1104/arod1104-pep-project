@@ -1,9 +1,7 @@
 package Service;
 
-import Model.Account;
 import Model.Message;
 import DAO.MessageDAO;
-import Service.AccountService;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -102,6 +100,12 @@ public class MessageService {
         return messageDAO.getMessageById(message.getMessage_id()); // Return the updated message
     }
 
+    /**
+     * Retrieves all messages posted by a specific account ID.
+     * 
+     * @param accountId The ID of the account whose messages are to be retrieved.
+     * @return A list of messages posted by the specified account, or an empty list if no messages are found.
+     */
     public List<Message> getAllMessagesByAccountId(int accountId) {
         if (!accountService.isAccountValid(accountId)) {
             return new ArrayList<>(); // Return an empty list if the account is invalid
