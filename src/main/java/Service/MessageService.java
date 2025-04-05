@@ -101,5 +101,12 @@ public class MessageService {
         messageDAO.updateMessageById(message);
         return messageDAO.getMessageById(message.getMessage_id()); // Return the updated message
     }
+
+    public List<Message> getAllMessagesByAccountId(int accountId) {
+        if (!accountService.isAccountValid(accountId)) {
+            return new ArrayList<>(); // Return an empty list if the account is invalid
+        }
+        return messageDAO.getAllMessagesByAccountId(accountId); // Retrieve messages from the DAO
+    }
     
 }

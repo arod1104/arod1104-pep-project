@@ -43,7 +43,7 @@ public class SocialMediaController {
         app.get("messages/{message_id}", this::getMessageByIdHandler);     
         app.delete("messages/{message_id}", this::deleteMessageByIdHandler);
         app.patch("messages/{message_id}", this::patchUpdateMessagebyIdHandler);
-        app.get("messages/{account_id}/messages", this::getAllMessagesbyAccountIdHandler);
+        app.get("accounts/{account_id}/messages", this::getAllMessagesByAccountIdHandler);
         
         return app;
     }
@@ -155,5 +155,18 @@ public class SocialMediaController {
         } else {
             ctx.status(400); // Invalid update
         }
+    }
+
+    /**
+     * This is an example handler for the getAllMessagesbyAccountId endpoint.
+     * @param ctx The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException will be thrown if the JSON cannot be processed.
+     */
+    private void getAllMessagesByAccountIdHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        int accountId = Integer.parseInt(ctx.pathParam("account_id"));
+        List<Message> messages = messageService.getAllMessagesByAccountId(accountId);
+        ctx.status(200);
+        ctx.json(mapper.writeValueAsString(messages));
     }
 }

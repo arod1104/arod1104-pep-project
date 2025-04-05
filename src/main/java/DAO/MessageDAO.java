@@ -164,4 +164,42 @@ public class MessageDAO {
             }
         }
     }
+
+    /**
+     * Retrieves all messages posted by a specific account ID from the database.
+     * 
+     * @param accountId The ID of the account whose messages are to be retrieved.
+     * @return A list of messages posted by the specified account, or an empty list if no messages are found.
+     */
+    public List<Message> getAllMessagesByAccountId(int accountId) {
+        Connection connection = ConnectionUtil.getConnection();
+        List<Message> messages = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM message WHERE posted_by = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                // Create a new Message object for each row in the result set
+                int messageId = rs.getInt("message_id");
+                int postedBy = rs.getInt("posted_by");
+                String messageText = rs.getString("message_text");
+                long timePostedEpoch = rs.getLong("time_posted_epoch");
+
+                Message message = new Message(messageId, postedBy, messageText, timePostedEpoch);
+                messages.add(message); // Add the message to the list
+            }
+            return messages; // Return the list of messages
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return new ArrayList<>(); // return an empty list regardless if an exception occurs
+    }
 }
