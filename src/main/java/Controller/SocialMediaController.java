@@ -102,10 +102,8 @@ public class SocialMediaController {
     private void getAllMessagesHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         List<Message> messages = messageService.getAllMessages();
-        if (messages != null && !messages.isEmpty()) {
-            ctx.status(200);
-            ctx.json(mapper.writeValueAsString(messages));
-        }
+        ctx.status(200);
+        ctx.json(mapper.writeValueAsString(messages));
     }
 
     private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
