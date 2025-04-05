@@ -39,7 +39,7 @@ public class MessageService {
     public Message addMessage(Message message) {
         if (message.getMessage_text() == null || 
             message.getMessage_text().isBlank() ||
-            message.getMessage_text().length() >= 255 ||
+            message.getMessage_text().length() > 255 ||
             !accountService.isAccountValid(message.getPosted_by())) {
             return null; // Message content is invalid
         }
@@ -78,6 +78,28 @@ public class MessageService {
             return messageToDelete;
         }
         return null; // Message does not exist
+    }
+
+    /**
+     * Updates a message by its ID.
+     * 
+     * @param message The message to be updated.
+     * @return The updated message, or null if the operation fails.
+     */
+    public Message updateMessageById(Message message) {
+        if (message.getMessage_text() == null || 
+            message.getMessage_text().isBlank() || 
+            message.getMessage_text().length() > 255) {
+            return null; // Invalid message text
+        }
+
+        Message existingMessage = messageDAO.getMessageById(message.getMessage_id());
+        if (existingMessage == null) {
+            return null; // Message does not exist
+        }
+
+        messageDAO.updateMessageById(message);
+        return messageDAO.getMessageById(message.getMessage_id()); // Return the updated message
     }
     
 }

@@ -40,8 +40,10 @@ public class SocialMediaController {
         app.post("login", this::postLoginHandler);
         app.post("messages", this::postAddMessageHandler);
         app.get("messages", this::getAllMessagesHandler);
-        app.get("messages/{message_id}", this::getMessageByIdHandler);        
-        app.delete("messages/{message_id}", this::deleteMessageByIdHandler);        
+        app.get("messages/{message_id}", this::getMessageByIdHandler);     
+        app.delete("messages/{message_id}", this::deleteMessageByIdHandler);
+        app.patch("messages/{message_id}", this::patchUpdateMessagebyIdHandler);
+        app.get("messages/{account_id}/messages", this::getAllMessagesbyAccountIdHandler);
         
         return app;
     }
@@ -130,6 +132,28 @@ public class SocialMediaController {
         } else {
             ctx.status(200);
             ctx.json(""); // Empty response body if no message is found
+        }
+    }
+
+    private void patchUpdateMessagebyIdHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message existingMessage = messageService.getMessageById(messageId);
+
+        if (existingMessage == null) {
+            ctx.status(400); // Message does not exist
+            return;
+        }
+
+        Message updatedMessage = mapper.readValue(ctx.body(), Message.class);
+        updatedMessage.setMessage_id(messageId); // Ensure the ID is set correctly
+
+        Message result = messageService.updateMessageById(updatedMessage);
+        if (result != null) {
+            ctx.status(200);
+            ctx.json(mapper.writeValueAsString(result));
+        } else {
+            ctx.status(400); // Invalid update
         }
     }
 }
