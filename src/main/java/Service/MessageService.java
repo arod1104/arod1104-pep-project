@@ -112,5 +112,4 @@ public class MessageService {
         }
         return messageDAO.getAllMessagesByAccountId(accountId); // Retrieve messages from the DAO
     }
-    
 }
