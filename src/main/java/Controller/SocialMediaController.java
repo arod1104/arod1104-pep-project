@@ -40,6 +40,7 @@ public class SocialMediaController {
         app.post("login", this::postLoginHandler);
         app.post("messages", this::postAddMessageHandler);
         app.get("messages", this::getAllMessagesHandler);
+        app.get("messages/{message_id}", this::getMessageByIdHandler);        
         
         return app;
     }
@@ -104,6 +105,19 @@ public class SocialMediaController {
         if (messages != null && !messages.isEmpty()) {
             ctx.status(200);
             ctx.json(mapper.writeValueAsString(messages));
+        }
+    }
+
+    private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message message = messageService.getMessageById(messageId);
+        if (message != null) {
+            ctx.status(200);
+            ctx.json(mapper.writeValueAsString(message));
+        } else {
+            ctx.status(200);
+            ctx.json(""); // Empty response body if no message is found
         }
     }
 }

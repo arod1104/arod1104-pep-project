@@ -84,4 +84,37 @@ public class MessageDAO {
         }
         return new ArrayList<>(); // return an empty list regardless if an exception occurs
     }
+
+    /**
+     * Retrieves a message by its ID from the database.
+     * 
+     * @param messageId The ID of the message to be retrieved.
+     * @return The message with the specified ID, or null if no such message is found.
+     */
+    public Message getMessageById(int messageId) {
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "SELECT * FROM message WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, messageId);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return new Message(
+                    rs.getInt("message_id"),
+                    rs.getInt("posted_by"),
+                    rs.getString("message_text"),
+                    rs.getLong("time_posted_epoch")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 }
