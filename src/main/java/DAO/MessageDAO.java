@@ -117,4 +117,89 @@ public class MessageDAO {
         }
         return null;
     }
+
+    /**
+     * Deletes a message by its ID from the database.
+     * 
+     * @param messageId The ID of the message to be deleted.
+     */
+    public void deleteMessageById(int messageId) {
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "DELETE FROM message WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, messageId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Updates a message by its ID in the database.
+     * 
+     * @param message The message to be updated.
+     */
+    public void updateMessageById(Message message) {
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, message.getMessage_text());
+            preparedStatement.setInt(2, message.getMessage_id());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Retrieves all messages posted by a specific account ID from the database.
+     * 
+     * @param accountId The ID of the account whose messages are to be retrieved.
+     * @return A list of messages posted by the specified account, or an empty list if no messages are found.
+     */
+    public List<Message> getAllMessagesByAccountId(int accountId) {
+        Connection connection = ConnectionUtil.getConnection();
+        List<Message> messages = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM message WHERE posted_by = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                // Create a new Message object for each row in the result set
+                int messageId = rs.getInt("message_id");
+                int postedBy = rs.getInt("posted_by");
+                String messageText = rs.getString("message_text");
+                long timePostedEpoch = rs.getLong("time_posted_epoch");
+
+                Message message = new Message(messageId, postedBy, messageText, timePostedEpoch);
+                messages.add(message); // Add the message to the list
+            }
+            return messages; // Return the list of messages
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return new ArrayList<>(); // return an empty list regardless if an exception occurs
+    }
 }

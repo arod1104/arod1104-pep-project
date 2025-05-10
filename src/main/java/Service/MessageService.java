@@ -1,9 +1,7 @@
 package Service;
 
-import Model.Account;
 import Model.Message;
 import DAO.MessageDAO;
-import Service.AccountService;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -39,7 +37,7 @@ public class MessageService {
     public Message addMessage(Message message) {
         if (message.getMessage_text() == null || 
             message.getMessage_text().isBlank() ||
-            message.getMessage_text().length() >= 255 ||
+            message.getMessage_text().length() > 255 ||
             !accountService.isAccountValid(message.getPosted_by())) {
             return null; // Message content is invalid
         }
@@ -64,5 +62,54 @@ public class MessageService {
     public Message getMessageById(int messageId) {
         return messageDAO.getMessageById(messageId);
     }
-    
+
+    /**
+     * Deletes a message by its ID.
+     * 
+     * @param messageId The ID of the message to be deleted.
+     * @return The deleted message, or null if no such message exists.
+     */
+    public Message deleteMessageById(int messageId) {
+        Message messageToDelete = messageDAO.getMessageById(messageId);
+        if (messageToDelete != null) {
+            messageDAO.deleteMessageById(messageId);
+            return messageToDelete;
+        }
+        return null; // Message does not exist
+    }
+
+    /**
+     * Updates a message by its ID.
+     * 
+     * @param message The message to be updated.
+     * @return The updated message, or null if the operation fails.
+     */
+    public Message updateMessageById(Message message) {
+        if (message.getMessage_text() == null || 
+            message.getMessage_text().isBlank() || 
+            message.getMessage_text().length() > 255) {
+            return null; // Invalid message text
+        }
+
+        Message existingMessage = messageDAO.getMessageById(message.getMessage_id());
+        if (existingMessage == null) {
+            return null; // Message does not exist
+        }
+
+        messageDAO.updateMessageById(message);
+        return messageDAO.getMessageById(message.getMessage_id()); // Return the updated message
+    }
+
+    /**
+     * Retrieves all messages posted by a specific account ID.
+     * 
+     * @param accountId The ID of the account whose messages are to be retrieved.
+     * @return A list of messages posted by the specified account, or an empty list if no messages are found.
+     */
+    public List<Message> getAllMessagesByAccountId(int accountId) {
+        if (!accountService.isAccountValid(accountId)) {
+            return new ArrayList<>(); // Return an empty list if the account is invalid
+        }
+        return messageDAO.getAllMessagesByAccountId(accountId); // Retrieve messages from the DAO
+    }
 }

@@ -6,6 +6,9 @@ import DAO.AccountDAO;
 public class AccountService {
     private AccountDAO accountDAO;
 
+    /**
+     * Default constructor for AccountService that initializes the AccountDAO.
+     */
     public AccountService() {
         accountDAO = new AccountDAO();
     }
@@ -55,9 +58,7 @@ public class AccountService {
      * @return true if the account exists, false otherwise.
      */
     public boolean isAccountValid(int accountId) {
-        if (accountId <= 0) {
-            return false; // Invalid account_id
-        } else if (accountDAO.getAccountById(accountId) == null) {
+        if (accountDAO.getAccountById(accountId) == null) {
             return false; // Account does not exist
         }
         return true; // Account exists
